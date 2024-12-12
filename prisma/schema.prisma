@@ -27,6 +27,7 @@ model Group {
 model Participant {
   id         String   @id @default(uuid())
   name       String
+  email      String
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
 

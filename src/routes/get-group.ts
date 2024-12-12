@@ -14,13 +14,14 @@ export async function getGroup(app: FastifyInstance) {
           select: {
             id: true,
             name: true,
+            email: true
           },
         },
       },
     })
 
     if (!group) {
-      return reply.code(400).send({ message: 'Bad request' })
+      return reply.code(400).send({ error: 'Group does not exist' })
     }
 
     return reply.status(200).send(group)
