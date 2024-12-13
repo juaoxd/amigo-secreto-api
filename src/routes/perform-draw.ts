@@ -1,7 +1,6 @@
 import { FastifyInstance } from 'fastify'
 import { prisma } from '../lib/prisma'
-import { getMailClient } from '../lib/mail'
-import nodemailer from 'nodemailer'
+import { resend } from '../lib/mail'
 
 export async function performDraw(app: FastifyInstance) {
   app.post('/groups/:groupId/draw', async (req, reply) => {
@@ -39,21 +38,14 @@ export async function performDraw(app: FastifyInstance) {
       receiver: shuffled[(index + 1) % shuffled.length], // O próximo da lista ou o primeiro
     }))
 
-    const mail = await getMailClient()
-
     await Promise.all(
       pairs.map(async ({ giver, receiver }) => {
-        const message = await mail.sendMail({
-          from: {
-            name: 'Amigo Secreto',
-            address: 'amigo@secreto.com',
-          },
-          to: giver.email,
+        await resend.emails.send({
+          from: 'Hi <oi@amigosecreto.juao.dev>',
+          to: ['delivered@resend.dev'],
           subject: 'Seu amigo secreto foi sorteado!',
           text: `Olá ${giver.name}, seu amigo secreto é ${receiver.name}`,
         })
-        
-        console.log(nodemailer.getTestMessageUrl(message))
       })
     )
 
